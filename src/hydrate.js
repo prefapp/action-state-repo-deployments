@@ -1,4 +1,6 @@
-function hydrateDeployment(path) {
+function createNestedObject(arr, val) { return arr.reduceRight((acc, key) => ({ [key]: acc }), val); };
+
+function hydrateDeployment(path, ca_keys = ['councilbox-server', 'ca_secret', 'crts']) {
 
     const fs = require('node:fs');
     const path = require('node:path');
@@ -30,7 +32,8 @@ function hydrateDeployment(path) {
         ca += fs.readFileSync(file, 'utf-8')
     })
 
-    const dict_file = { 'councilbox-server': { 'ca_secret': { 'crts': ca } } }
+
+    const dict_file = createNestedObject(ca_keys, ca)
 
     const ca_yaml = path.join(path, "ca.yml")
 
