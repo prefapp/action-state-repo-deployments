@@ -48,3 +48,5 @@ function hydrateDeployment(
 
   ca_yaml_stream.end()
 }
+
+module.exports = { createNestedObject, hydrateDeployment }
