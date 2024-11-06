@@ -1,6 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
-const glob = require('node:glob')
+const glob = require('glob')
 
 function createNestedObject(arr, val) {
   return arr.reduceRight((acc, key) => ({ [key]: acc }), val)
