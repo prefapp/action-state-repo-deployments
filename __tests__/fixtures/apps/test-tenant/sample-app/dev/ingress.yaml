@@ -1,0 +1,3 @@
+ingress-nginx:
+    labels:
+      application: "fixtures"
