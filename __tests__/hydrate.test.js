@@ -1,5 +1,5 @@
 const path = require('node:path')
-const os = require('node:os');
+const os = require('node:os')
 const fs = require('fs-extra')
 const glob = require('glob')
 const { createNestedObject, hydrateDeployment } = require('../src/hydrate')
@@ -7,13 +7,12 @@ const { createNestedObject, hydrateDeployment } = require('../src/hydrate')
 jest.mock('node:fs')
 jest.mock('node:glob')
 
-let tmpDir;
+let tmpDir
 
 describe('hydrateDeployment', () => {
   beforeEach(() => {
-
     // Create a temporary directory to render the files
-    tmpDir = fs.mkdtempSync(os.tmpdir());
+    tmpDir = fs.mkdtempSync(os.tmpdir())
 
     jest.clearAllMocks()
   })
@@ -26,7 +25,6 @@ describe('hydrateDeployment', () => {
   })
 
   it('should hydrate deployment correctly', () => {
-
     // Copy the fixtures folder to the temporary directory
 
     fs.copySync(path.join(__dirname, 'fixtures'), tmpDir)
@@ -34,7 +32,5 @@ describe('hydrateDeployment', () => {
     deploymentPath = path.join(tmpDir, 'apps', 'test-tenant', 'sample-app')
 
     hydrateDeployment(tmpDir)
-
   })
-
 })
