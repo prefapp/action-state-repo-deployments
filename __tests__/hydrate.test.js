@@ -29,8 +29,8 @@ describe('hydrateDeployment', () => {
 
     fs.copySync(path.join(__dirname, 'fixtures'), tmpDir)
 
-    deploymentPath = path.join(tmpDir, 'apps', 'test-tenant', 'sample-app')
+    const deploymentPath = path.join(tmpDir, 'apps', 'test-tenant', 'sample-app')
 
-    hydrateDeployment(tmpDir)
+    hydrateDeployment(deploymentPath)
   })
 })
