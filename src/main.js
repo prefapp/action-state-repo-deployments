@@ -1,5 +1,7 @@
 const core = require('@actions/core')
 const { wait } = require('./wait')
+const { checkDependencies } = require('./validate')
+const { hydrateDeployments } = require('./hydrate')
 
 /**
  * The main function for the action.
@@ -7,18 +9,16 @@ const { wait } = require('./wait')
  */
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    // Check for required dependencies
+    checkDependencies()
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const updatedDeployments = JSON.parse(core.getInput('updated_deployments'))
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    // Hydrate the deployments to include all values in final.yaml
+    hydrateDeployments(updatedDeployments)
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    // Template the deployments
+
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)

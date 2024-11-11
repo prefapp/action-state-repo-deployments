@@ -19,16 +19,11 @@ function hydrateDeployment(
 
   const final_yaml = path.join(deploymentPath, 'final.yaml')
 
-  const final_yaml_stream = fs.createWriteStream(final_yaml, { flags: 'w' })
-
   for (const fname of filtered_files) {
     const content = fs.readFileSync(fname, 'utf-8')
-    final_yaml_stream.write(content)
+    fs.appendFileSync(final_yaml, content)
   }
 
-  final_yaml_stream.end()
-
-  console.log(fs.readFileSync(final_yaml, 'utf-8'))
 
   const ca_files = glob.sync(path.join(deploymentPath, 'ca-certs', '*.crt'))
 
@@ -42,11 +37,13 @@ function hydrateDeployment(
 
   const ca_yaml = path.join(deploymentPath, 'ca.yml')
 
-  const ca_yaml_stream = fs.createWriteStream(ca_yaml, { flags: 'w' })
-
-  ca_yaml_stream.write(JSON.stringify(dict_file))
-
-  ca_yaml_stream.end()
+  fs.writeFileSync(ca_yaml, JSON.stringify(dict_file))
 }
 
-module.exports = { createNestedObject, hydrateDeployment }
+function hydrateDeployments(deployments) {
+  for (const deployment of deployments) {
+    hydrateDeployment(deployment)
+  }
+}
+
+module.exports = { createNestedObject, hydrateDeployment, hydrateDeployments }

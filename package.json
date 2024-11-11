@@ -65,7 +65,8 @@
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "glob": "^11.0.0"
+    "glob": "^11.0.0",
+    "hasbin": "^1.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
