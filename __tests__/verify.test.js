@@ -1,8 +1,8 @@
 const fs = require('fs-extra')
 const os = require('os')
 const path = require('path')
-const { VerifyConfig, verifyDeployments } = require('../src/verify')
-const { TemplateConfig, templateDeployments } = require('../src/template')
+const { VerifyConfig } = require('../src/verify')
+const { TemplateConfig } = require('../src/template')
 const { createDeployment } = require('../src/deployment')
 const git = require('../src/git')
 
@@ -53,6 +53,6 @@ describe('hydrateDeployment', () => {
 
     // Verify it does not throw
 
-    expect(() => verifyDep.verify()).not.toThrow()
+    expect(() => verifyDep._verify()).not.toThrow()
   })
 })

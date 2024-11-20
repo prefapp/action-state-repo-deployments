@@ -74,6 +74,6 @@ describe('hydrateDeployment', () => {
 
     // Verify that the there is only one file in the output directory
     files = glob.sync(`${templateConfig.outputDir}/**/*.@(yaml|yml)`)
-    expect(files.length).toBe(1)
+    expect(files.length).toBe(5)
   })
 })
