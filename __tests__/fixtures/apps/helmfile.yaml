@@ -1,0 +1,52 @@
+# environments:
+#   dev:
+#     values: 
+#     - {{ .Environment.Name }}.yaml
+
+# repositories: []
+
+# releases:
+#   - name: foo
+#     chart: ./foo-chart
+#     version: {{ .Values.version }}
+#     values:
+#       - {{ .Environment.Name }}/final.yaml
+#       - {{ .Environment.Name }}/images.yaml
+#     set:
+#       - name: global.chart_version
+#         value: {{ .Values.version }}
+
+#     jsonPatches:
+#       - target:
+#           group: apps
+#           version: v1
+#           kind: Deployment
+#           name: foo-deployment
+#           namespace: {{ .Values.tenant }}-{{ .Values.app }}-{{ .Environment.Name }}
+#         patch:
+#           - op: copy
+#             from: /spec
+#             path: /spec
+---
+bases:
+  - environments.yaml
+  - repositories.yaml
+
+releases:
+
+  - name: {{.StateValues.app}}
+    chart: {{.StateValues.chart}}
+    version: {{.StateValues.version}}
+    namespace:  
+      {{- if hasKey .StateValues "namespace" -}}
+      {{.StateValues.namespace | quote | indent 1}}
+      {{- else -}}
+      {{- $nmspc := printf "%s-%s-%s" .StateValues.tenant .StateValues.app .Environment.Name -}}
+      {{- $nmspc | quote | indent 1 -}}
+      {{- end }}
+    values:
+      - values.yaml.gotmpl
+
+    {{- if hasKey .StateValues "hooks" }}
+    hooks: {{.StateValues.hooks | toYaml | nindent 6 -}}
+    {{- end -}}
