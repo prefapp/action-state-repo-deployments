@@ -19,7 +19,7 @@ describe('hydrateDeployment', () => {
     fs.removeSync(tmpDir)
   })
 
-  it.only('should be able to validate the namespace', async () => {
+  it('should be able to validate the namespace', async () => {
     const verifyConfig = new VerifyConfig(
       'dev',
       path.join(tmpDir, 'deployments'),
@@ -51,8 +51,8 @@ describe('hydrateDeployment', () => {
 
     const verifyDep = createDeployment(updatedDeployments, verifyConfig)
 
-    await verifyDep._verify()
-  })
+    // Verify it does not throw
 
-  it('should be able to validate the argocd project namespace', () => {})
+    expect(() => verifyDep.verify()).not.toThrow()
+  })
 })
