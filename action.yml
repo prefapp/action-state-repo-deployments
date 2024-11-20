@@ -7,11 +7,18 @@ inputs:
   updated_deployments:
     description: 'JSON string of updated deployments'
     required: true
-
-# Define your outputs here.
-outputs:
-  time:
-    description: 'Your output description here'
+  operation:
+    description: 'Operation to perform'
+    required: true
+  template_dir:
+    description: 'Directory containing the deployment templates'
+    required: true
+  output_dir:
+    description: 'Directory to output the rendered templates'
+    required: true
+  argo_projects_dir:
+    description: 'Directory containing the ArgoCD projects'
+    required: false
 
 runs:
   using: node20
