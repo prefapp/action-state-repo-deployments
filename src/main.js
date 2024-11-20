@@ -8,7 +8,6 @@ const { verifyDeployments, VerifyConfig } = require('./verify')
  */
 async function run() {
   try {
-
     const operation = core.getInput('operation')
     const updatedDeployments = JSON.parse(core.getInput('updated_deployments'))
     const deploymentsDir = core.getInput('template_dir')
@@ -23,13 +22,17 @@ async function run() {
         renderDeployments(updatedDeployments, renderConfig)
         break
       case 'verify':
-        const verifyConfig = new VerifyConfig(deploymentsDir, outputDir, argoPorjectsDir, prNUmber)
+        const verifyConfig = new VerifyConfig(
+          deploymentsDir,
+          outputDir,
+          argoPorjectsDir,
+          prNUmber
+        )
         verifyDeployments(updatedDeployments, verifyConfig)
         break
       default:
         throw new Error(`Unknown operation: ${operation}`)
     }
-
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)

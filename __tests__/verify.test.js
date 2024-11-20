@@ -5,69 +5,63 @@ const { VerifyConfig, verifyDeployments } = require('../src/verify')
 const { TemplateConfig, templateDeployments } = require('../src/template')
 
 describe('hydrateDeployment', () => {
-    let tmpDir
+  let tmpDir
 
-    beforeEach(() => {
-        // Create a temporary directory to render the files
-        tmpDir = fs.mkdtempSync(os.tmpdir() + path.sep)
+  beforeEach(() => {
+    // Create a temporary directory to render the files
+    tmpDir = fs.mkdtempSync(os.tmpdir() + path.sep)
+  })
 
-    })
+  afterEach(() => {
+    // Remove the temporary directory
+    // fs.removeSync(tmpDir)
+  })
 
-    afterEach(() => {
-        // Remove the temporary directory
-        // fs.removeSync(tmpDir)
+  beforeAll(() => {
+    // jest.mock('../src/git', () => ({
+    //     cloneRepo: jest.fn(),
+    //     fetchRepo: jest.fn(),
+    //     checkoutBranch: jest.fn(),
+    //     getCurrentBranch: jest.fn(),
+    //     getLatestCommit: jest.fn(),
+    //     getFileContent: jest.fn(),
+    //     listFiles: jest.fn(),
+    // }))
+  })
 
-    })
+  afterAll(() => {
+    jest.clearAllMocks()
+  })
 
-    beforeAll(() => {
+  it.only('should be able to validate the namespace', async () => {
+    const verifyConfig = new VerifyConfig(
+      'dev',
+      path.join(tmpDir, 'deployments'),
+      path.join(tmpDir, 'output'),
+      path.join(__dirname, 'fixtures', 'state-argo'),
+      process.env.GITHUB_PR_NUMBER
+    )
 
-        // jest.mock('../src/git', () => ({
-        //     cloneRepo: jest.fn(),
-        //     fetchRepo: jest.fn(),
-        //     checkoutBranch: jest.fn(),
-        //     getCurrentBranch: jest.fn(),
-        //     getLatestCommit: jest.fn(),
-        //     getFileContent: jest.fn(),
-        //     listFiles: jest.fn(),
-        // }))
-    })
+    // Copy the fixtures folder to the temporary directory
+    fs.copySync(
+      path.join(__dirname, 'fixtures'),
+      path.join(tmpDir, 'deployments')
+    )
 
-    afterAll(() => {
-        jest.clearAllMocks()
-    })
+    const updatedDeployments = ['apps/cluster-name/test-tenant/sample-app']
 
-    it.only('should be able to validate the namespace', async () => {
+    // Template the deployments
+    const templateConfig = new TemplateConfig(
+      'dev',
+      path.join(tmpDir, 'deployments'),
+      path.join(tmpDir, 'output'),
+      true
+    )
 
-        const verifyConfig = new VerifyConfig(
-            'dev',
-            path.join(tmpDir, 'deployments'),
-            path.join(tmpDir, 'output'),
-            path.join(__dirname, 'fixtures', 'state-argo'),
-            process.env.GITHUB_PR_NUMBER
-        );
+    templateDeployments(updatedDeployments, templateConfig)
 
-        // Copy the fixtures folder to the temporary directory
-        fs.copySync(path.join(__dirname, 'fixtures'), path.join(tmpDir, 'deployments'))
+    await verifyDeployments(updatedDeployments, verifyConfig)
+  })
 
-        const updatedDeployments = ['apps/cluster-name/test-tenant/sample-app']
-
-        // Template the deployments
-        const templateConfig = new TemplateConfig(
-            'dev',
-            path.join(tmpDir, 'deployments'),
-            path.join(tmpDir, 'output'),
-            true
-        );
-
-        templateDeployments(updatedDeployments, templateConfig)
-
-        await verifyDeployments(updatedDeployments, verifyConfig)
-
-    })
-
-    it('should be able to validate the argocd project namespace', () => {
-
-    })
-
-
+  it('should be able to validate the argocd project namespace', () => {})
 })

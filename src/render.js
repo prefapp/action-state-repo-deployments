@@ -1,27 +1,26 @@
 const { TemplateConfig } = require('./template')
 
 class RenderConfig {
-    constructor(deploymentDir, outputDir) {
-        this.deploymentDir = deploymentDir
-        this.outputDir = outputDir
-    }
+  constructor(deploymentDir, outputDir) {
+    this.deploymentDir = deploymentDir
+    this.outputDir = outputDir
+  }
 }
 
 function renderDeployments(updatedDeployments, renderConfig) {
+  console.log('Rendering deployments')
 
-    console.log('Rendering deployments')
+  // Check for required dependencies
+  checkDependencies()
 
-    // Check for required dependencies
-    checkDependencies()
+  // Template the deployments
+  const templateConfig = new TemplateConfig(
+    renderConfig.deploymentsDir,
+    renderConfig.outputDir,
+    true
+  )
 
-    // Template the deployments
-    const templateConfig = new TemplateConfig(
-        renderConfig.deploymentsDir,
-        renderConfig.outputDir,
-        true
-    );
-
-    templateDeployments(updatedDeployments, templateConfig)
+  templateDeployments(updatedDeployments, templateConfig)
 }
 
 module.exports = { RenderConfig, renderDeployments }

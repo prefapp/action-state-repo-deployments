@@ -1,16 +1,15 @@
-const hasbin = require('hasbin');
+const hasbin = require('hasbin')
 
 function checkDependencies() {
+  requiredBins = ['helmfile', 'helm']
 
-    requiredBins = ['helmfile', 'helm']
+  const result = hasbin.all.sync(requiredBins)
 
-    const result = hasbin.all.sync(requiredBins)
+  if (!result) {
+    throw new Error('Required dependencies not found.')
+  }
 
-    if (!result) {
-        throw new Error('Required dependencies not found.')
-    }
-
-    return result
+  return result
 }
 
 module.exports = { checkDependencies }

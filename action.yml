@@ -7,7 +7,6 @@ inputs:
   updated_deployments:
     description: 'JSON string of updated deployments'
     required: true
-  
 
 # Define your outputs here.
 outputs:
