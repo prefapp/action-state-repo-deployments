@@ -1,2 +1,0 @@
-service-portal:
-  source: "nginx"

@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "author": "",
   "private": true,
+  "type": "module",
   "homepage": "https://github.com/actions/javascript-action#readme",
   "repository": {
     "type": "git",
@@ -40,6 +41,8 @@
     "extends": "./.github/linters/.eslintrc.yml"
   },
   "jest": {
+    "testTimeout": 30000,
+    "transform": {},
     "verbose": true,
     "clearMocks": true,
     "testEnvironment": "node",
@@ -65,6 +68,7 @@
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.0",
     "glob": "^11.0.0",
     "hasbin": "^1.2.3"
   },

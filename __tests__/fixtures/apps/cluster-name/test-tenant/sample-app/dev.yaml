@@ -1,0 +1,19 @@
+# dev.yaml
+version: 18.2.5 
+chart: bitnami/nginx 
+
+hooks: []
+
+extraPatches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: foo-deployment
+      # namespace: {{ .Values.tenant }}-{{ .Values.app }}-{{ .Environment.Name }}
+      namespace: test-tenant-sample-app-dev
+    patch:
+      - op: copy
+        from: /spec
+        path: /spec
+execs: []

@@ -1,5 +1,5 @@
 const hasbin = require('hasbin');
-const { checkDependencies } = require('../src/validate');
+const { checkDependencies } = require('../src/dependencies');
 const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');

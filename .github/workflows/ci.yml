@@ -21,6 +21,10 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
+      # We need to install helmfile to run tests
+      - name: Setup helmfile
+        uses: mamezou-tech/setup-helmfile@v2.0.0
+
       - name: Setup Node.js
         id: setup-node
         uses: actions/setup-node@v4
