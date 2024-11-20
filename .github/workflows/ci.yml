@@ -62,3 +62,4 @@ jobs:
         uses: ./
         with:
           updated_deployments: '[]'
+          operation: 'render'
