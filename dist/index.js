@@ -38950,7 +38950,8 @@ module.exports = { helmfileTemplate }
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(7484)
-const { renderDeployments, RenderConfig } = __nccwpck_require__(9121)
+const { renderDeployments } = __nccwpck_require__(9121)
+const { TemplateConfig } = __nccwpck_require__(9275)
 const { verifyDeployments, VerifyConfig } = __nccwpck_require__(1608)
 const github = __nccwpck_require__(3228)
 
@@ -38965,16 +38966,23 @@ async function run() {
     const deploymentsDir = core.getInput('template_dir')
     const outputDir = core.getInput('output_dir')
     const argoPorjectsDir = core.getInput('argo_projects_dir')
-    const prNUmber = github.context.payload.pull_request
-
+    const prNUmber =
+      github.context.payload.pull_request ?? process.env.GITHUB_PR_NUMBER
+    const environment = core.getInput('environment')
     switch (operation) {
       case 'render': {
-        const renderConfig = new RenderConfig(deploymentsDir, outputDir)
+        const renderConfig = new TemplateConfig(
+          environment,
+          deploymentsDir,
+          outputDir,
+          true
+        )
         renderDeployments(updatedDeployments, renderConfig)
         break
       }
       case 'verify': {
         const verifyConfig = new VerifyConfig(
+          environment,
           deploymentsDir,
           outputDir,
           argoPorjectsDir,
@@ -39002,33 +39010,19 @@ module.exports = {
 /***/ 9121:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const { TemplateConfig, templateDeployments } = __nccwpck_require__(9275)
+const { templateDeployments } = __nccwpck_require__(9275)
 const { checkDependencies } = __nccwpck_require__(1596)
 
-class RenderConfig {
-  constructor(deploymentDir, outputDir) {
-    this.deploymentDir = deploymentDir
-    this.outputDir = outputDir
-  }
-}
-
-function renderDeployments(updatedDeployments, renderConfig) {
+function renderDeployments(updatedDeployments, config) {
   console.log('Rendering deployments')
 
   // Check for required dependencies
   checkDependencies()
 
-  // Template the deployments
-  const templateConfig = new TemplateConfig(
-    renderConfig.deploymentsDir,
-    renderConfig.outputDir,
-    true
-  )
-
-  templateDeployments(updatedDeployments, templateConfig)
+  templateDeployments(updatedDeployments, config)
 }
 
-module.exports = { RenderConfig, renderDeployments }
+module.exports = { renderDeployments }
 
 
 /***/ }),

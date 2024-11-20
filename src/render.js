@@ -1,7 +1,6 @@
 const { templateDeployments } = require('./template')
 const { checkDependencies } = require('./dependencies')
 
-
 function renderDeployments(updatedDeployments, config) {
   console.log('Rendering deployments')
 
