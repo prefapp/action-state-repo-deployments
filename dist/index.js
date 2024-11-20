@@ -38965,7 +38965,6 @@ async function run() {
     const deploymentsDir = core.getInput('template_dir')
     const outputDir = core.getInput('output_dir')
     const argoPorjectsDir = core.getInput('argo_projects_dir')
-    console.log(process.env.GITHUB_PR_NUMBER)
     const prNUmber = github.context.payload.pull_request
 
     switch (operation) {
