@@ -1,5 +1,6 @@
 const core = require('@actions/core')
-const { renderDeployments, RenderConfig } = require('./render')
+const { renderDeployments } = require('./render')
+const { TemplateConfig } = require('./template')
 const { verifyDeployments, VerifyConfig } = require('./verify')
 const github = require('@actions/github')
 
@@ -14,16 +15,23 @@ async function run() {
     const deploymentsDir = core.getInput('template_dir')
     const outputDir = core.getInput('output_dir')
     const argoPorjectsDir = core.getInput('argo_projects_dir')
-    const prNUmber = github.context.payload.pull_request
-
+    const prNUmber = github.context.payload.pull_request ?? process.env.GITHUB_PR_NUMBER
+    const environment = core.getInput('environment')
     switch (operation) {
       case 'render': {
-        const renderConfig = new RenderConfig(deploymentsDir, outputDir)
+        const renderConfig = new TemplateConfig(
+          environment,
+          deploymentsDir,
+          outputDir,
+          true
+        )
         renderDeployments(updatedDeployments, renderConfig)
         break
       }
       case 'verify': {
+
         const verifyConfig = new VerifyConfig(
+          environment,
           deploymentsDir,
           outputDir,
           argoPorjectsDir,

@@ -4,6 +4,9 @@ author: 'Your name or organization here'
 
 # Define your inputs here.
 inputs:
+  environment:
+    description: 'Environment to deploy'
+    required: true
   updated_deployments:
     description: 'JSON string of updated deployments'
     required: true
