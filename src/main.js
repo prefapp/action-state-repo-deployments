@@ -1,6 +1,7 @@
 const core = require('@actions/core')
 const { renderDeployments, RenderConfig } = require('./render')
 const { verifyDeployments, VerifyConfig } = require('./verify')
+const github = require('@actions/github')
 
 /**
  * The main function for the action.
@@ -17,11 +18,12 @@ async function run() {
     const prNUmber = github.context.payload.pull_request
 
     switch (operation) {
-      case 'render':
+      case 'render': {
         const renderConfig = new RenderConfig(deploymentsDir, outputDir)
         renderDeployments(updatedDeployments, renderConfig)
         break
-      case 'verify':
+      }
+      case 'verify': {
         const verifyConfig = new VerifyConfig(
           deploymentsDir,
           outputDir,
@@ -30,6 +32,7 @@ async function run() {
         )
         verifyDeployments(updatedDeployments, verifyConfig)
         break
+      }
       default:
         throw new Error(`Unknown operation: ${operation}`)
     }

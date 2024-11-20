@@ -3,6 +3,8 @@ const os = require('os')
 const path = require('path')
 const { VerifyConfig, verifyDeployments } = require('../src/verify')
 const { TemplateConfig, templateDeployments } = require('../src/template')
+const { createDeployment } = require('../src/deployment')
+const git = require('../src/git')
 
 describe('hydrateDeployment', () => {
   let tmpDir
@@ -14,23 +16,7 @@ describe('hydrateDeployment', () => {
 
   afterEach(() => {
     // Remove the temporary directory
-    // fs.removeSync(tmpDir)
-  })
-
-  beforeAll(() => {
-    // jest.mock('../src/git', () => ({
-    //     cloneRepo: jest.fn(),
-    //     fetchRepo: jest.fn(),
-    //     checkoutBranch: jest.fn(),
-    //     getCurrentBranch: jest.fn(),
-    //     getLatestCommit: jest.fn(),
-    //     getFileContent: jest.fn(),
-    //     listFiles: jest.fn(),
-    // }))
-  })
-
-  afterAll(() => {
-    jest.clearAllMocks()
+    fs.removeSync(tmpDir)
   })
 
   it.only('should be able to validate the namespace', async () => {
@@ -48,7 +34,7 @@ describe('hydrateDeployment', () => {
       path.join(tmpDir, 'deployments')
     )
 
-    const updatedDeployments = ['apps/cluster-name/test-tenant/sample-app']
+    const updatedDeployments = 'apps/cluster-name/test-tenant/sample-app'
 
     // Template the deployments
     const templateConfig = new TemplateConfig(
@@ -58,9 +44,14 @@ describe('hydrateDeployment', () => {
       true
     )
 
-    templateDeployments(updatedDeployments, templateConfig)
+    // Create the deployment
+    const templateDep = createDeployment(updatedDeployments, templateConfig)
 
-    await verifyDeployments(updatedDeployments, verifyConfig)
+    templateDep.template()
+
+    const verifyDep = createDeployment(updatedDeployments, verifyConfig)
+
+    await verifyDep._verify()
   })
 
   it('should be able to validate the argocd project namespace', () => {})

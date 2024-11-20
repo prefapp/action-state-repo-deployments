@@ -34,7 +34,7 @@ class Deployment {
   _postTemplate() {
     const outputFiles = glob.sync(`${this.config.outputDir}/**/*.@(yaml|yml)`)
 
-    outputFiles.forEach(file => {
+    for (const file of outputFiles) {
       const fileContent = fs.readFileSync(file, 'utf8')
       const yamlContent = yaml.loadAll(fileContent)
 
@@ -44,7 +44,7 @@ class Deployment {
 
         if (!crKind || !crName) {
           throw new Error(
-            `File ${file} does not kind or metadata.name. Got ${crKind} and ${crName}`
+            `File ${file} does not have kind or metadata.name. Got ${crKind} and ${crName}`
           )
         }
 
@@ -61,15 +61,15 @@ class Deployment {
       }
 
       fs.removeSync(file)
-    })
+    }
 
     // After renaming the files there is an empty folder named helmfile-xxxxxxxxx-<chart-name>
     // We need to remove this folder
     const helmfileFolders = glob.sync(`${this.config.outputDir}/**/helmfile-*`)
 
-    helmfileFolders.forEach(folder => {
+    for (const folder of helmfileFolders) {
       fs.removeSync(folder)
-    })
+    }
   }
 
   async verify() {
@@ -129,8 +129,8 @@ class Deployment {
     })
 
     const pr = prs.data.find(
-      pr =>
-        pr.head.ref ===
+      pullRequest =>
+        pullRequest.head.ref ===
         `${this.config.environment}-${this.kind}-${this.folders.join('-')}`
     )
 
@@ -138,22 +138,16 @@ class Deployment {
 
     if (!pr) {
       // Create a PR
-      const prResponse = await octo.rest.pulls.create({
+
+      const prResponse = await createPr(
+        octo,
         owner,
         repo,
-        title: `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`,
-        head: `${this.config.environment}-${this.kind}-${this.folders.join('-')}`,
-        base: 'deployment',
-        body: `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`
-      })
-
-      // const prResponse = createPr(
-      //     octo,
-      //     owner,
-      //     repo,
-      //     `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`,
-      //     `${this.config.environment}-${this.kind}-${this.folders.join('-')}`, 'deployment', `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`
-      // )
+        `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`,
+        `${this.config.environment}-${this.kind}-${this.folders.join('-')}`,
+        'deployment',
+        `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`
+      )
 
       newPrNumber = prResponse.data.number
 
@@ -212,7 +206,6 @@ class AppDeployment extends Deployment {
         ...this.folders,
         `${this.config.environment}.yaml`
       ),
-      //  ./ cluster - name / test - tenant / sample - app / dev.yaml
       [this.tenant, this.app, this.config.environment].join('-')
     )
 
@@ -231,7 +224,7 @@ class AppDeployment extends Deployment {
 
     const namespace = `${this.tenant}-${this.app}-${this.config.environment}`
 
-    files.forEach(file => {
+    for (const file of files) {
       const filePath = path.join(file)
       const content = fs.readFileSync(filePath, 'utf8')
       const data = yaml.load(content)
@@ -241,7 +234,7 @@ class AppDeployment extends Deployment {
           `File ${file} does not have the correct metadata.namespace. Expected ${this.tenant}-${this.app}-${this.config.environment} and got data ${data?.metadata?.name}`
         )
       }
-    })
+    }
 
     // Validate the argoproject
 
@@ -275,13 +268,19 @@ class SysServiceDeployment extends Deployment {
     console.log('Template sys-service deployment')
 
     const result = helmfileTemplate(
-      path.join(this.config.deploymentsDir, this.kind, ...this.folders),
+      path.join(this.config.deploymentsDir, this.kind),
       path.join(this.config.outputDir, this.kind, ...this.folders),
       this.folders.join('-'),
       {
         app: this.app,
         cluster: this.cluster
-      }
+      },
+      path.join(
+        this.config.deploymentsDir,
+        this.kind,
+        ...this.folders,
+        `${this.config.environment}.yaml`
+      )
     )
 
     console.log(result.stderr.toString())

@@ -1,4 +1,5 @@
-const { TemplateConfig } = require('./template')
+const { TemplateConfig, templateDeployments } = require('./template')
+const { checkDependencies } = require('./dependencies')
 
 class RenderConfig {
   constructor(deploymentDir, outputDir) {

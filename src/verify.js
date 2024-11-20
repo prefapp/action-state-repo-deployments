@@ -33,8 +33,6 @@ async function verifyDeployments(updatedDeployments, config) {
     }
   }
 
-  console.log(result)
-
   return result
 }
 

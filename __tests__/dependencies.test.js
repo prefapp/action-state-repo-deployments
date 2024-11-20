@@ -16,7 +16,7 @@ describe('checkDependencies', () => {
     process.env.PATH = originalPath // Restore original PATH
   })
 
-  it.only('should not throw if we add all required binaries to the PATH', () => {
+  it('should not throw if we add all required binaries to the PATH', () => {
     hasbin.all.sync = jest.fn().mockReturnValue(false)
 
     // Create a temporary directory

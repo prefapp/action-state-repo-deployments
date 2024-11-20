@@ -40,18 +40,18 @@ describe('hydrateDeployment', () => {
 
     // Verify that each file follows the naming convention <kind>.<namespace>.yaml
 
-    files = glob.sync(`${templateConfig.outputDir}/**/*.@(yaml|yml)`)
+    let files = glob.sync(`${templateConfig.outputDir}/**/*.@(yaml|yml)`)
 
-    files.forEach(file => {
+    for (const file of files) {
       const filename = path.basename(file)
       const [kind, name] = filename.split('.')
 
-      fileContents = fs.readFileSync(file, 'utf-8')
+      const fileContents = fs.readFileSync(file, 'utf-8')
       const data = yaml.load(fileContents)
 
       expect(data.metadata.name).toBe(name)
       expect(data.kind).toBe(kind)
-    })
+    }
 
     // Update dev yaml to set serviceAccount.create to fale in final.yaml
     const finalYaml = path.join(

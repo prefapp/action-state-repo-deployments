@@ -1,7 +1,7 @@
 const hasbin = require('hasbin')
 
 function checkDependencies() {
-  requiredBins = ['helmfile', 'helm']
+  const requiredBins = ['helmfile', 'helm']
 
   const result = hasbin.all.sync(requiredBins)
 
