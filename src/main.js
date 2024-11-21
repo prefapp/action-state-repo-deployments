@@ -15,7 +15,7 @@ async function run() {
     const outputDir = core.getInput('output_dir')
     const argoPorjectsDir = core.getInput('argo_projects_dir')
     const prNUmber =
-      github.context.payload.pull_request ?? process.env.GITHUB_PR_NUMBER
+      github.context.payload.pull_request.number ?? process.env.GITHUB_PR_NUMBER
     const environment = core.getInput('environment')
 
     const config = new Config(
