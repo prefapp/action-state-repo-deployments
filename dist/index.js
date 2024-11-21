@@ -39081,14 +39081,18 @@ module.exports = { renderDeployments }
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 // Create a custom class to specify template configuration properties
-
+const core = __nccwpck_require__(7484)
 const { createDeployment } = __nccwpck_require__(6722)
 
 function templateDeployments(updatedDeployments, config) {
   for (const deployment of updatedDeployments) {
-    const dp = createDeployment(deployment, config)
+    try {
+      const dp = createDeployment(deployment, config)
 
-    dp.template()
+      dp.template()
+    } catch (error) {
+      core.error(error)
+    }
   }
 }
 
@@ -39100,6 +39104,7 @@ module.exports = { templateDeployments }
 /***/ 1608:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const core = __nccwpck_require__(7484)
 const { createDeployment } = __nccwpck_require__(6722)
 
 async function verifyDeployments(updatedDeployments, config) {
@@ -39115,7 +39120,7 @@ async function verifyDeployments(updatedDeployments, config) {
 
       result[deployment] = await dp.verify()
     } catch (error) {
-      console.log(error)
+      core.error(error)
     }
   }
 

@@ -1,12 +1,16 @@
 // Create a custom class to specify template configuration properties
-
+const core = require('@actions/core')
 const { createDeployment } = require('./deployment')
 
 function templateDeployments(updatedDeployments, config) {
   for (const deployment of updatedDeployments) {
-    const dp = createDeployment(deployment, config)
+    try {
+      const dp = createDeployment(deployment, config)
 
-    dp.template()
+      dp.template()
+    } catch (error) {
+      core.error(error)
+    }
   }
 }
 

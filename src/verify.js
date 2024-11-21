@@ -1,3 +1,4 @@
+const core = require('@actions/core')
 const { createDeployment } = require('./deployment')
 
 async function verifyDeployments(updatedDeployments, config) {
@@ -13,7 +14,7 @@ async function verifyDeployments(updatedDeployments, config) {
 
       result[deployment] = await dp.verify()
     } catch (error) {
-      console.log(error)
+      core.error(error)
     }
   }
 
