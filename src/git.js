@@ -141,6 +141,14 @@ const createBranch = (octo, owner, repo, ref, sha) => {
   })
 }
 
+const deleteBranch = (octo, owner, repo, ref) => {
+  return octo.rest.git.deleteRef({
+    owner,
+    repo,
+    ref
+  })
+}
+
 const createComment = (octo, owner, repo, issue_number, body) => {
   return octo.rest.issues.createComment({
     owner,
@@ -173,6 +181,7 @@ module.exports = {
   uploadToRepo,
   getCurrentCommit,
   createBranch,
+  deleteBranch,
   createComment,
   mergePr,
   createPr

@@ -5,6 +5,7 @@ const yaml = require('js-yaml')
 const glob = require('glob')
 const {
   createBranch,
+  deleteBranch,
   uploadToRepo,
   getCurrentCommit,
   createComment,
@@ -109,11 +110,13 @@ class Deployment {
     // get the sha of the deployment branch
     const commit = await getCurrentCommit(octo, owner, repo, 'deployment')
 
+    const branchName = `${this.config.environment}-${this.kind}-${this.folders.join('-')}`
+
     await createBranch(
       octo,
       owner,
       repo,
-      `refs/heads/${this.config.environment}-${this.kind}-${this.folders.join('-')}`,
+      `refs/heads/${branchName}`,
       commit.commitSha
     )
 
@@ -123,7 +126,7 @@ class Deployment {
       path.join(this.config.outputDir),
       owner,
       repo,
-      `${this.config.environment}-${this.kind}-${this.folders.join('-')}`
+      branchName
     )
 
     // Check if there is a PR already open for this deployment
@@ -153,7 +156,7 @@ class Deployment {
         owner,
         repo,
         `Deployment in ${this.folders.join('-')} for ${this.config.environment} environment`,
-        `${this.config.environment}-${this.kind}-${this.folders.join('-')}`,
+        branchName,
         'deployment',
         `Deployment in ${this.folders.join('-')} for ${this.config.environment} environment`
       )
@@ -169,9 +172,7 @@ class Deployment {
         `Original PR: #${this.config.prNumber}`
       )
     } else {
-      core.info(
-        `PR already exists for ${this.config.environment}-${this.kind}-${this.folders.join('-')} with number ${pr.number}`
-      )
+      core.info(`PR already exists for ${branchName} with number ${pr.number}`)
       newPrNumber = pr.number
     }
 
@@ -183,6 +184,9 @@ class Deployment {
     if (autoMerge) {
       core.info(`Merging PR ${newPrNumber} automatically`)
       await mergePr(octo, owner, repo, newPrNumber)
+
+      // We make sure the branch is deleted
+      await deleteBranch(octo, owner, repo, branchName)
     }
   }
 
