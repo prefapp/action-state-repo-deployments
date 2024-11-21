@@ -4,12 +4,18 @@ const path = require('path')
 
 // https://gist.github.com/sondt2709/96b45f85d81a769d834a738b73d42a5c
 
-const listFilesRecursive = dir => {
+const listFilesRecursive = (dir, ignoredFolders = ['.git']) => {
   const files = fs.readdirSync(dir)
   const filesPaths = files.map(file => path.join(dir, file))
-  const directories = filesPaths.filter(file => fs.statSync(file).isDirectory())
+  const directories = filesPaths.filter(file => {
+    const isDirectory = fs.statSync(file).isDirectory()
+    const isIgnored = ignoredFolders.some(ignoredFolder =>
+      file.includes(ignoredFolder)
+    )
+    return isDirectory && !isIgnored
+  })
   const filesInDirectories = directories
-    .map(directory => listFilesRecursive(directory))
+    .map(directory => listFilesRecursive(directory, ignoredFolders))
     .flat()
   const filesOnly = filesPaths.filter(file => !fs.statSync(file).isDirectory())
   return filesOnly.concat(filesInDirectories)
