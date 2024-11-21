@@ -38449,6 +38449,7 @@ const {
   createPr
 } = __nccwpck_require__(5661)
 const { getOctokit } = __nccwpck_require__(3228)
+const core = __nccwpck_require__(7484)
 
 class Deployment {
   constructor(kind, config, folders) {
@@ -38458,6 +38459,8 @@ class Deployment {
   }
 
   template() {
+    console.info(`Templating deployment ${this}`)
+
     this._template()
     this._postTemplate()
   }
@@ -38510,6 +38513,8 @@ class Deployment {
   }
 
   async verify() {
+    console.info(`Verifying deployment ${this.kind}`)
+
     this._verify()
 
     await this._postVerify()
@@ -38576,6 +38581,10 @@ class Deployment {
     if (!pr) {
       // Create a PR
 
+      core.info(
+        `Creating PR for ${this.config.environment}-${this.kind}-${this.folders.join('-')}`
+      )
+
       const prResponse = await createPr(
         octo,
         owner,
@@ -38597,6 +38606,9 @@ class Deployment {
         `Original PR: #${this.config.prNumber}`
       )
     } else {
+      core.info(
+        `PR already exists for ${this.config.environment}-${this.kind}-${this.folders.join('-')} with number ${pr.number}`
+      )
       newPrNumber = pr.number
     }
 
@@ -38606,6 +38618,7 @@ class Deployment {
     const autoMerge = this._isAutoMerge()
 
     if (autoMerge) {
+      core.info(`Merging PR ${newPrNumber} automatically`)
       await mergePr(octo, owner, repo, newPrNumber)
     }
   }
