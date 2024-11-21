@@ -10,9 +10,6 @@ inputs:
   updated_deployments:
     description: 'JSON string of updated deployments'
     required: true
-  operation:
-    description: 'Operation to perform'
-    required: true
   template_dir:
     description: 'Directory containing the deployment templates'
     required: true

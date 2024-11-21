@@ -1,8 +1,7 @@
 const fs = require('fs-extra')
 const os = require('os')
 const path = require('path')
-const { VerifyConfig } = require('../src/verify')
-const { TemplateConfig } = require('../src/template')
+const { Config } = require('../src/config')
 const { createDeployment } = require('../src/deployment')
 const git = require('../src/git')
 
@@ -20,7 +19,7 @@ describe('hydrateDeployment', () => {
   })
 
   it('should be able to validate the namespace', async () => {
-    const verifyConfig = new VerifyConfig(
+    const config = new Config(
       'dev',
       path.join(tmpDir, 'deployments'),
       path.join(tmpDir, 'output'),
@@ -36,20 +35,12 @@ describe('hydrateDeployment', () => {
 
     const updatedDeployments = 'apps/cluster-name/test-tenant/sample-app'
 
-    // Template the deployments
-    const templateConfig = new TemplateConfig(
-      'dev',
-      path.join(tmpDir, 'deployments'),
-      path.join(tmpDir, 'output'),
-      true
-    )
-
     // Create the deployment
-    const templateDep = createDeployment(updatedDeployments, templateConfig)
+    const templateDep = createDeployment(updatedDeployments, config)
 
     templateDep.template()
 
-    const verifyDep = createDeployment(updatedDeployments, verifyConfig)
+    const verifyDep = createDeployment(updatedDeployments, config)
 
     // Verify it does not throw
 

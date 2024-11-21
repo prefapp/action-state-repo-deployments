@@ -38377,6 +38377,39 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 1283:
+/***/ ((module) => {
+
+class Config {
+  /**
+   * @param {string} environment The environment to deploy to.
+   * @param {string} deploymentsDir The directory containing the deployment templates.
+   * @param {string} outputDir The directory to output the rendered deployments.
+   * @param {string} argoProjectsDir The directory containing the ArgoCD projects.
+   * @param {string} prNumber The pull request number.
+   */
+  constructor(
+    environment,
+    deploymentsDir,
+    outputDir,
+    argoProjectsDir,
+    prNumber
+  ) {
+    this.environment = environment
+    this.deploymentsDir = deploymentsDir
+    this.outputDir = outputDir
+    this.argoProjectsDir = argoProjectsDir
+    this.prNumber = prNumber
+  }
+}
+
+module.exports = {
+  Config
+}
+
+
+/***/ }),
+
 /***/ 1596:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -38547,10 +38580,10 @@ class Deployment {
         octo,
         owner,
         repo,
-        `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`,
+        `Deployment in ${this.folders.join('-')} for ${this.config.environment} environment`,
         `${this.config.environment}-${this.kind}-${this.folders.join('-')}`,
         'deployment',
-        `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`
+        `Deployment in ${this.folders.join('-')} for ${this.config.environment} environment`
       )
 
       newPrNumber = prResponse.data.number
@@ -38957,8 +38990,8 @@ module.exports = { helmfileTemplate }
 
 const core = __nccwpck_require__(7484)
 const { renderDeployments } = __nccwpck_require__(9121)
-const { TemplateConfig } = __nccwpck_require__(9275)
-const { verifyDeployments, VerifyConfig } = __nccwpck_require__(1608)
+const { verifyDeployments } = __nccwpck_require__(1608)
+const { Config } = __nccwpck_require__(1283)
 const github = __nccwpck_require__(3228)
 
 /**
@@ -38967,7 +39000,6 @@ const github = __nccwpck_require__(3228)
  */
 async function run() {
   try {
-    const operation = core.getInput('operation')
     const updatedDeployments = JSON.parse(core.getInput('updated_deployments'))
     const deploymentsDir = core.getInput('template_dir')
     const outputDir = core.getInput('output_dir')
@@ -38975,31 +39007,17 @@ async function run() {
     const prNUmber =
       github.context.payload.pull_request ?? process.env.GITHUB_PR_NUMBER
     const environment = core.getInput('environment')
-    switch (operation) {
-      case 'render': {
-        const renderConfig = new TemplateConfig(
-          environment,
-          deploymentsDir,
-          outputDir,
-          true
-        )
-        renderDeployments(updatedDeployments, renderConfig)
-        break
-      }
-      case 'verify': {
-        const verifyConfig = new VerifyConfig(
-          environment,
-          deploymentsDir,
-          outputDir,
-          argoPorjectsDir,
-          prNUmber
-        )
-        verifyDeployments(updatedDeployments, verifyConfig)
-        break
-      }
-      default:
-        throw new Error(`Unknown operation: ${operation}`)
-    }
+
+    const config = new Config(
+      environment,
+      deploymentsDir,
+      outputDir,
+      argoPorjectsDir,
+      prNUmber
+    )
+
+    renderDeployments(updatedDeployments, config)
+    verifyDeployments(updatedDeployments, config)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
@@ -39039,29 +39057,16 @@ module.exports = { renderDeployments }
 // Create a custom class to specify template configuration properties
 
 const { createDeployment } = __nccwpck_require__(6722)
-const fs = __nccwpck_require__(9896)
-const path = __nccwpck_require__(6928)
-const glob = __nccwpck_require__(1363)
-const yaml = __nccwpck_require__(4281)
 
-class TemplateConfig {
-  constructor(environment, deploymentsDir, outputDir, deletePreviousTemplate) {
-    this.environment = environment
-    this.deploymentsDir = deploymentsDir
-    this.outputDir = outputDir
-    this.deletePreviousTemplate = deletePreviousTemplate
-  }
-}
-
-function templateDeployments(updatedDeployments, templateConfig) {
+function templateDeployments(updatedDeployments, config) {
   for (const deployment of updatedDeployments) {
-    const dp = createDeployment(deployment, templateConfig)
+    const dp = createDeployment(deployment, config)
 
     dp.template()
   }
 }
 
-module.exports = { TemplateConfig, templateDeployments }
+module.exports = { templateDeployments }
 
 
 /***/ }),
@@ -39070,22 +39075,6 @@ module.exports = { TemplateConfig, templateDeployments }
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { createDeployment } = __nccwpck_require__(6722)
-
-class VerifyConfig {
-  constructor(
-    environment,
-    deploymentsDir,
-    outputDir,
-    argoProjectsDir,
-    prNumber
-  ) {
-    this.environment = environment
-    this.deploymentsDir = deploymentsDir
-    this.outputDir = outputDir
-    this.argoProjectsDir = argoProjectsDir
-    this.prNumber = prNumber
-  }
-}
 
 async function verifyDeployments(updatedDeployments, config) {
   console.log('Verifying deployments')
@@ -39107,7 +39096,7 @@ async function verifyDeployments(updatedDeployments, config) {
   return result
 }
 
-module.exports = { VerifyConfig, verifyDeployments }
+module.exports = { verifyDeployments }
 
 
 /***/ }),

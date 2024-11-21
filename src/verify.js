@@ -1,21 +1,5 @@
 const { createDeployment } = require('./deployment')
 
-class VerifyConfig {
-  constructor(
-    environment,
-    deploymentsDir,
-    outputDir,
-    argoProjectsDir,
-    prNumber
-  ) {
-    this.environment = environment
-    this.deploymentsDir = deploymentsDir
-    this.outputDir = outputDir
-    this.argoProjectsDir = argoProjectsDir
-    this.prNumber = prNumber
-  }
-}
-
 async function verifyDeployments(updatedDeployments, config) {
   console.log('Verifying deployments')
 
@@ -36,4 +20,4 @@ async function verifyDeployments(updatedDeployments, config) {
   return result
 }
 
-module.exports = { VerifyConfig, verifyDeployments }
+module.exports = { verifyDeployments }

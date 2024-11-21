@@ -1,4 +1,5 @@
-const { templateDeployments, TemplateConfig } = require('../src/template')
+const { templateDeployments } = require('../src/template')
+const { Config } = require('../src/config')
 const fs = require('fs-extra')
 const os = require('os')
 const path = require('path')
@@ -21,11 +22,11 @@ describe('hydrateDeployment', () => {
   })
 
   it('should be able to template a chart', () => {
-    const templateConfig = new TemplateConfig(
+    const config = new Config(
       'dev',
       path.join(tmpDir, 'deployments'),
       path.join(tmpDir, 'output'),
-      true
+      undefined
     )
 
     // Copy the fixtures folder to the temporary directory
@@ -36,11 +37,11 @@ describe('hydrateDeployment', () => {
 
     const updatedDeployments = ['apps/cluster-name/test-tenant/sample-app']
 
-    templateDeployments(updatedDeployments, templateConfig)
+    templateDeployments(updatedDeployments, config)
 
     // Verify that each file follows the naming convention <kind>.<namespace>.yaml
 
-    let files = glob.sync(`${templateConfig.outputDir}/**/*.@(yaml|yml)`)
+    let files = glob.sync(`${config.outputDir}/**/*.@(yaml|yml)`)
 
     for (const file of files) {
       const filename = path.basename(file)
@@ -70,10 +71,10 @@ describe('hydrateDeployment', () => {
     fs.writeFileSync(finalYaml, yaml.dump(finalData))
 
     // Re-run the templateDeployments
-    templateDeployments(updatedDeployments, templateConfig)
+    templateDeployments(updatedDeployments, config)
 
     // Verify that the there is only one file in the output directory
-    files = glob.sync(`${templateConfig.outputDir}/**/*.@(yaml|yml)`)
+    files = glob.sync(`${config.outputDir}/**/*.@(yaml|yml)`)
     expect(files.length).toBe(5)
   })
 })

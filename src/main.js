@@ -1,7 +1,7 @@
 const core = require('@actions/core')
 const { renderDeployments } = require('./render')
-const { TemplateConfig } = require('./template')
-const { verifyDeployments, VerifyConfig } = require('./verify')
+const { verifyDeployments } = require('./verify')
+const { Config } = require('./config')
 const github = require('@actions/github')
 
 /**
@@ -10,7 +10,6 @@ const github = require('@actions/github')
  */
 async function run() {
   try {
-    const operation = core.getInput('operation')
     const updatedDeployments = JSON.parse(core.getInput('updated_deployments'))
     const deploymentsDir = core.getInput('template_dir')
     const outputDir = core.getInput('output_dir')
@@ -18,31 +17,17 @@ async function run() {
     const prNUmber =
       github.context.payload.pull_request ?? process.env.GITHUB_PR_NUMBER
     const environment = core.getInput('environment')
-    switch (operation) {
-      case 'render': {
-        const renderConfig = new TemplateConfig(
-          environment,
-          deploymentsDir,
-          outputDir,
-          true
-        )
-        renderDeployments(updatedDeployments, renderConfig)
-        break
-      }
-      case 'verify': {
-        const verifyConfig = new VerifyConfig(
-          environment,
-          deploymentsDir,
-          outputDir,
-          argoPorjectsDir,
-          prNUmber
-        )
-        verifyDeployments(updatedDeployments, verifyConfig)
-        break
-      }
-      default:
-        throw new Error(`Unknown operation: ${operation}`)
-    }
+
+    const config = new Config(
+      environment,
+      deploymentsDir,
+      outputDir,
+      argoPorjectsDir,
+      prNUmber
+    )
+
+    renderDeployments(updatedDeployments, config)
+    verifyDeployments(updatedDeployments, config)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)

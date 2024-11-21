@@ -143,10 +143,10 @@ class Deployment {
         octo,
         owner,
         repo,
-        `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`,
+        `Deployment in ${this.folders.join('-')} for ${this.config.environment} environment`,
         `${this.config.environment}-${this.kind}-${this.folders.join('-')}`,
         'deployment',
-        `Auto merge ${this.config.environment} ${this.kind} ${this.folders.join('-')}`
+        `Deployment in ${this.folders.join('-')} for ${this.config.environment} environment`
       )
 
       newPrNumber = prResponse.data.number
