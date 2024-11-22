@@ -38494,6 +38494,7 @@ class Deployment {
           this.config.outputDir,
           this.kind,
           ...this.folders,
+          this.config.environment,
           newFileName
         )
 
