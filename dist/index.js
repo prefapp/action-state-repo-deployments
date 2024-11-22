@@ -38447,7 +38447,8 @@ const {
   getCurrentCommit,
   createComment,
   mergePr,
-  createPr
+  createPr,
+  addLabels
 } = __nccwpck_require__(5661)
 const { getOctokit } = __nccwpck_require__(3228)
 const core = __nccwpck_require__(7484)
@@ -38623,6 +38624,7 @@ class Deployment {
       )
 
       // Add labels to the PR
+      await addLabels(octo, owner, repo, newPrNumber, this._getLabels())
     } else {
       core.info(`PR already exists for ${branchName} with number ${pr.number}`)
       newPrNumber = pr.number

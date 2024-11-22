@@ -10,7 +10,8 @@ const {
   getCurrentCommit,
   createComment,
   mergePr,
-  createPr
+  createPr,
+  addLabels
 } = require('./git')
 const { getOctokit } = require('@actions/github')
 const core = require('@actions/core')
@@ -186,6 +187,7 @@ class Deployment {
       )
 
       // Add labels to the PR
+      await addLabels(octo, owner, repo, newPrNumber, this._getLabels())
     } else {
       core.info(`PR already exists for ${branchName} with number ${pr.number}`)
       newPrNumber = pr.number
