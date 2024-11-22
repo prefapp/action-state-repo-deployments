@@ -77,4 +77,6 @@ describe('hydrateDeployment', () => {
     files = glob.sync(`${config.outputDir}/**/*.@(yaml|yml)`)
     expect(files.length).toBe(5)
   })
+
+  // TODO: Add test to verify that apps and sys services output folders are created correctly
 })

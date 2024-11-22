@@ -141,11 +141,11 @@ const createBranch = (octo, owner, repo, ref, sha) => {
   })
 }
 
-const deleteBranch = (octo, owner, repo, ref) => {
+const deleteBranch = (octo, owner, repo, branch) => {
   return octo.rest.git.deleteRef({
     owner,
     repo,
-    ref
+    ref: `heads/${branch}`
   })
 }
 
