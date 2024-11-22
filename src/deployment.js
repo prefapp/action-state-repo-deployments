@@ -162,10 +162,10 @@ class Deployment {
         octo,
         owner,
         repo,
-        this._toString(false),
+        this._toString(true),
         branchName,
         'deployment',
-        this._toString(true)
+        this._toString(false)
       )
 
       newPrNumber = prResponse.data.number
@@ -214,7 +214,7 @@ class AppDeployment extends Deployment {
 
   _toString(summarize) {
     if (summarize) {
-      return `Deployment in \`cluster: \`${this.cluster}\`, tenant: \`/${this.tenant}\`, app: \`${this.app}\` for \`${this.config.environment}\` environment`
+      return `Deployment in cluster: \`${this.cluster}\`, tenant: \`/${this.tenant}\`, app: \`${this.app}\` for \`${this.config.environment}\` environment`
     } else {
       return `
       Deployment in:
