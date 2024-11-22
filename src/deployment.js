@@ -41,6 +41,12 @@ class Deployment {
     )
   }
 
+  _getLabels() {
+    throw new Error(
+      `Method 'getLabels' must be implemented in kind ${this.kind}`
+    )
+  }
+
   _postTemplate() {
     const outputFiles = glob.sync(`${this.config.outputDir}/**/*.@(yaml|yml)`)
 
@@ -178,6 +184,8 @@ class Deployment {
         newPrNumber,
         `Original PR: #${this.config.prNumber}`
       )
+
+      // Add labels to the PR
     } else {
       core.info(`PR already exists for ${branchName} with number ${pr.number}`)
       newPrNumber = pr.number
@@ -214,8 +222,9 @@ class AppDeployment extends Deployment {
 
   _toString(summarize) {
     if (summarize) {
-      return `Deployment in cluster: \`${this.cluster}\`, tenant: \`/${this.tenant}\`, app: \`${this.app}\` for \`${this.config.environment}\` environment`
+      return `Deployment in cluster: \`${this.cluster}\`, tenant: \`${this.tenant}\`, app: \`${this.app}\` for \`${this.config.environment}\` environment`
     } else {
+      // Make it this way to avoid adding extra tabs at the start and github interprets it as a block code
       return [
         `Deployment in cluster:`,
         `- cluster: \`${this.cluster}\``,
@@ -224,6 +233,15 @@ class AppDeployment extends Deployment {
         `- environment: \`${this.config.environment}\``
       ].join('\n')
     }
+  }
+
+  _getLabels() {
+    return [
+      `app/${this.app}`,
+      `tenant/${this.tenant}`,
+      `env/${this.config.environment}`,
+      `cluster-name/${this.cluster}`
+    ]
   }
 
   _template() {

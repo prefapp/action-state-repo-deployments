@@ -177,6 +177,48 @@ const createPr = (octo, owner, repo, title, head, base, body) => {
     body
   })
 }
+
+function getLabelColor(label) {
+  if (label.includes('app/')) {
+    return 'ac1d1c'
+  } else if (label.includes('tenant/')) {
+    return '234099'
+  } else if (label.includes('env/')) {
+    return '33810b'
+  } else if (label.includes('cluster-name/')) {
+    return 'f1c232'
+  } else {
+    return '000000'
+  }
+}
+
+const addLabels = async (octo, owner, repo, issue_number, labels) => {
+  const repoLabels = await octokit.rest.issues.listLabelsForRepo({
+    owner,
+    repo
+  })
+
+  const labelsToAdd = labels.filter(label => {
+    return !repoLabels.data.some(repoLabel => repoLabel.name === label)
+  })
+
+  for (const label of labelsToAdd) {
+    await octokit.rest.issues.createLabel({
+      owner,
+      repo,
+      name: label,
+      color: getLabelColor(label)
+    })
+  }
+
+  return octo.rest.issues.addLabels({
+    owner,
+    repo,
+    issue_number,
+    labels
+  })
+}
+
 module.exports = {
   uploadToRepo,
   getCurrentCommit,
@@ -184,5 +226,6 @@ module.exports = {
   deleteBranch,
   createComment,
   mergePr,
-  createPr
+  createPr,
+  addLabels
 }
