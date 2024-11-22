@@ -216,13 +216,13 @@ class AppDeployment extends Deployment {
     if (summarize) {
       return `Deployment in \`cluster: \`${this.cluster}\`, tenant: \`/${this.tenant}\`, app: \`${this.app}\` for \`${this.config.environment}\` environment`
     } else {
-      return ```
+      return `
       Deployment in:
       - cluster: \`${this.cluster}\`
       - tenant: \`${this.tenant}\`
       - app: \`${this.app}\`
       - environment: \`${this.config.environment}\`
-      ```
+      `
     }
   }
 
