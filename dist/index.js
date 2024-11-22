@@ -38653,13 +38653,13 @@ class AppDeployment extends Deployment {
     if (summarize) {
       return `Deployment in cluster: \`${this.cluster}\`, tenant: \`/${this.tenant}\`, app: \`${this.app}\` for \`${this.config.environment}\` environment`
     } else {
-      return `
-Deployment in:
-- cluster: \`${this.cluster}\`
-- tenant: \`${this.tenant}\`
-- app: \`${this.app}\`
-- environment: \`${this.config.environment}\`
-      `
+      return [
+        `Deployment in cluster:`,
+        `- cluster: \`${this.cluster}\``,
+        `- tenant: \`${this.tenant}\``,
+        `- app: \`${this.app}\``,
+        `- environment: \`${this.config.environment}\``
+      ].join('\n')
     }
   }
 
