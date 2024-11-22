@@ -39012,7 +39012,7 @@ function getLabelColor(label) {
 }
 
 const addLabels = async (octo, owner, repo, issue_number, labels) => {
-  const repoLabels = await octokit.rest.issues.listLabelsForRepo({
+  const repoLabels = await octo.rest.issues.listLabelsForRepo({
     owner,
     repo
   })
@@ -39022,7 +39022,7 @@ const addLabels = async (octo, owner, repo, issue_number, labels) => {
   })
 
   for (const label of labelsToAdd) {
-    await octokit.rest.issues.createLabel({
+    await octo.rest.issues.createLabel({
       owner,
       repo,
       name: label,
