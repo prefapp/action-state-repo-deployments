@@ -185,7 +185,7 @@ function getLabelColor(label) {
     return '234099'
   } else if (label.includes('env/')) {
     return '33810b'
-  } else if (label.includes('cluster-name/')) {
+  } else if (label.includes('cluster/')) {
     return 'f1c232'
   } else {
     return '000000'
@@ -203,6 +203,10 @@ const addLabels = async (octo, owner, repo, issue_number, labels) => {
   })
 
   for (const label of labelsToAdd) {
+    const color = getLabelColor(label)
+
+    console.info(`Creating label ${label} with color ${color}`)
+
     await octo.rest.issues.createLabel({
       owner,
       repo,

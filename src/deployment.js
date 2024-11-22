@@ -242,7 +242,7 @@ class AppDeployment extends Deployment {
       `app/${this.app}`,
       `tenant/${this.tenant}`,
       `env/${this.config.environment}`,
-      `cluster-name/${this.cluster}`
+      `cluster/${this.cluster}`
     ]
   }
 
