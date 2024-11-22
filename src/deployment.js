@@ -210,7 +210,12 @@ class AppDeployment extends Deployment {
 
     const result = helmfileTemplate(
       path.join(this.config.deploymentsDir, this.kind),
-      path.join(this.config.outputDir, this.kind, ...this.folders),
+      path.join(
+        this.config.outputDir,
+        this.kind,
+        ...this.folders,
+        this.config.environment
+      ),
       this.config.environment,
       {
         tenant: this.tenant,
