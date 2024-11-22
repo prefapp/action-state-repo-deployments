@@ -165,7 +165,7 @@ class Deployment {
         this._toString(false),
         branchName,
         'deployment',
-        `Deployment in: ${this._toString(true)} for \`${this.config.environment}\` environment`
+        this._toString(true)
       )
 
       newPrNumber = prResponse.data.number

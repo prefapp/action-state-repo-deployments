@@ -14,6 +14,8 @@ async function verifyDeployments(updatedDeployments, config) {
 
       result[deployment] = await dp.verify()
     } catch (error) {
+      console.log(`Error verifying deployment ${deployment}`)
+      console.error(error)
       core.error(error)
     }
   }

@@ -30,6 +30,7 @@ async function run() {
     verifyDeployments(updatedDeployments, config)
   } catch (error) {
     // Fail the workflow run if an error occurs
+    console.error(error)
     core.setFailed(error.message)
   }
 }

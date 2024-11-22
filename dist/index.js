@@ -38602,7 +38602,7 @@ class Deployment {
         this._toString(false),
         branchName,
         'deployment',
-        `Deployment in: ${this._toString(true)} for \`${this.config.environment}\` environment`
+        this._toString(true)
       )
 
       newPrNumber = prResponse.data.number
@@ -39072,6 +39072,7 @@ async function run() {
     verifyDeployments(updatedDeployments, config)
   } catch (error) {
     // Fail the workflow run if an error occurs
+    console.error(error)
     core.setFailed(error.message)
   }
 }
@@ -39117,6 +39118,8 @@ function templateDeployments(updatedDeployments, config) {
 
       dp.template()
     } catch (error) {
+      console.log(`Errpr templating deployment ${deployment}`)
+      console.error(error)
       core.error(error)
     }
   }
@@ -39146,6 +39149,8 @@ async function verifyDeployments(updatedDeployments, config) {
 
       result[deployment] = await dp.verify()
     } catch (error) {
+      console.log(`Error verifying deployment ${deployment}`)
+      console.error(error)
       core.error(error)
     }
   }

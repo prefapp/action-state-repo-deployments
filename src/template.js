@@ -9,6 +9,8 @@ function templateDeployments(updatedDeployments, config) {
 
       dp.template()
     } catch (error) {
+      console.log(`Errpr templating deployment ${deployment}`)
+      console.error(error)
       core.error(error)
     }
   }
