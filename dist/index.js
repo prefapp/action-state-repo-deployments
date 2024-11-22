@@ -38625,6 +38625,9 @@ class Deployment {
 
       // Add labels to the PR
       await addLabels(octo, owner, repo, newPrNumber, this._getLabels())
+
+      // Add original author as reviewer
+      await addRevieweres(octo, owner, repo, newPrNumber, [this.config.author])
     } else {
       core.info(`PR already exists for ${branchName} with number ${pr.number}`)
       newPrNumber = pr.number
@@ -38997,6 +39000,15 @@ const createPr = (octo, owner, repo, title, head, base, body) => {
   })
 }
 
+const addRevieweres = (octo, owner, repo, prNumber, reviewers) => {
+  return octo.rest.pulls.requestReviewers({
+    owner,
+    repo,
+    pull_number: prNumber,
+    reviewers
+  })
+}
+
 function getLabelColor(label) {
   if (label.includes('app/')) {
     return 'ac1d1c'
@@ -39050,7 +39062,8 @@ module.exports = {
   createComment,
   mergePr,
   createPr,
-  addLabels
+  addLabels,
+  addRevieweres
 }
 
 
@@ -39125,6 +39138,7 @@ async function run() {
     const argoPorjectsDir = core.getInput('argo_projects_dir')
     const prNUmber =
       github.context.payload.pull_request.number ?? process.env.GITHUB_PR_NUMBER
+    const author = github.context.payload.sender.login
     const environment = core.getInput('environment')
 
     const config = new Config(
@@ -39132,7 +39146,8 @@ async function run() {
       deploymentsDir,
       outputDir,
       argoPorjectsDir,
-      prNUmber
+      prNUmber,
+      author
     )
 
     renderDeployments(updatedDeployments, config)

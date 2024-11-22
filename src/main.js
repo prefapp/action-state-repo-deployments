@@ -16,6 +16,7 @@ async function run() {
     const argoPorjectsDir = core.getInput('argo_projects_dir')
     const prNUmber =
       github.context.payload.pull_request.number ?? process.env.GITHUB_PR_NUMBER
+    const author = github.context.payload.sender.login
     const environment = core.getInput('environment')
 
     const config = new Config(
@@ -23,7 +24,8 @@ async function run() {
       deploymentsDir,
       outputDir,
       argoPorjectsDir,
-      prNUmber
+      prNUmber,
+      author
     )
 
     renderDeployments(updatedDeployments, config)

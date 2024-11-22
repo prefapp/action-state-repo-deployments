@@ -178,6 +178,15 @@ const createPr = (octo, owner, repo, title, head, base, body) => {
   })
 }
 
+const addRevieweres = (octo, owner, repo, prNumber, reviewers) => {
+  return octo.rest.pulls.requestReviewers({
+    owner,
+    repo,
+    pull_number: prNumber,
+    reviewers
+  })
+}
+
 function getLabelColor(label) {
   if (label.includes('app/')) {
     return 'ac1d1c'
@@ -231,5 +240,6 @@ module.exports = {
   createComment,
   mergePr,
   createPr,
-  addLabels
+  addLabels,
+  addRevieweres
 }
