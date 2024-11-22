@@ -178,7 +178,7 @@ const createPr = (octo, owner, repo, title, head, base, body) => {
   })
 }
 
-const addRevieweres = (octo, owner, repo, prNumber, reviewers) => {
+const addReviewers = (octo, owner, repo, prNumber, reviewers) => {
   return octo.rest.pulls.requestReviewers({
     owner,
     repo,
@@ -241,5 +241,5 @@ module.exports = {
   mergePr,
   createPr,
   addLabels,
-  addRevieweres
+  addReviewers
 }

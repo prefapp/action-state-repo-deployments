@@ -38448,7 +38448,8 @@ const {
   createComment,
   mergePr,
   createPr,
-  addLabels
+  addLabels,
+  addReviewers
 } = __nccwpck_require__(5661)
 const { getOctokit } = __nccwpck_require__(3228)
 const core = __nccwpck_require__(7484)
@@ -38627,7 +38628,7 @@ class Deployment {
       await addLabels(octo, owner, repo, newPrNumber, this._getLabels())
 
       // Add original author as reviewer
-      await addRevieweres(octo, owner, repo, newPrNumber, [this.config.author])
+      await addReviewers(octo, owner, repo, newPrNumber, [this.config.author])
     } else {
       core.info(`PR already exists for ${branchName} with number ${pr.number}`)
       newPrNumber = pr.number
@@ -39000,7 +39001,7 @@ const createPr = (octo, owner, repo, title, head, base, body) => {
   })
 }
 
-const addRevieweres = (octo, owner, repo, prNumber, reviewers) => {
+const addReviewers = (octo, owner, repo, prNumber, reviewers) => {
   return octo.rest.pulls.requestReviewers({
     owner,
     repo,
@@ -39063,7 +39064,7 @@ module.exports = {
   mergePr,
   createPr,
   addLabels,
-  addRevieweres
+  addReviewers
 }
 
 

@@ -11,7 +11,8 @@ const {
   createComment,
   mergePr,
   createPr,
-  addLabels
+  addLabels,
+  addReviewers
 } = require('./git')
 const { getOctokit } = require('@actions/github')
 const core = require('@actions/core')
@@ -190,7 +191,7 @@ class Deployment {
       await addLabels(octo, owner, repo, newPrNumber, this._getLabels())
 
       // Add original author as reviewer
-      await addRevieweres(octo, owner, repo, newPrNumber, [this.config.author])
+      await addReviewers(octo, owner, repo, newPrNumber, [this.config.author])
     } else {
       core.info(`PR already exists for ${branchName} with number ${pr.number}`)
       newPrNumber = pr.number
