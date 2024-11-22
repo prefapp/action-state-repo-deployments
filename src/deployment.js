@@ -35,6 +35,12 @@ class Deployment {
     )
   }
 
+  _toString(_summarize) {
+    throw new Error(
+      `Method 'toString' must be implemented in kind ${this.kind}`
+    )
+  }
+
   _postTemplate() {
     const outputFiles = glob.sync(`${this.config.outputDir}/**/*.@(yaml|yml)`)
 
@@ -156,10 +162,10 @@ class Deployment {
         octo,
         owner,
         repo,
-        `Deployment in ${this.folders.join('-')} for ${this.config.environment} environment`,
+        this._toString(false),
         branchName,
         'deployment',
-        `Deployment in ${this.folders.join('-')} for ${this.config.environment} environment`
+        `Deployment in: ${this._toString(true)} for \`${this.config.environment}\` environment`
       )
 
       newPrNumber = prResponse.data.number
@@ -204,6 +210,20 @@ class AppDeployment extends Deployment {
     this.cluster = cluster
     this.tenant = tenant
     this.app = app
+  }
+
+  _toString(summarize) {
+    if (summarize) {
+      return `Deployment in \`cluster: \`${this.cluster}\`, tenant: \`/${this.tenant}\`, app: \`${this.app}\` for \`${this.config.environment}\` environment`
+    } else {
+      return ```
+      Deployment in:
+      - cluster: \`${this.cluster}\`
+      - tenant: \`${this.tenant}\`
+      - app: \`${this.app}\`
+      - environment: \`${this.config.environment}\`
+      ```
+    }
   }
 
   _template() {
