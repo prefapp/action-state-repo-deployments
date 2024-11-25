@@ -191,6 +191,7 @@ class Deployment {
       await addLabels(octo, owner, repo, newPrNumber, this._getLabels())
 
       // Add original author as reviewer
+      core.info(`Adding ${this.config.author} as reviewer`)
       await addReviewers(octo, owner, repo, newPrNumber, [this.config.author])
     } else {
       core.info(`PR already exists for ${branchName} with number ${pr.number}`)
