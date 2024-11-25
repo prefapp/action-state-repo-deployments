@@ -125,7 +125,7 @@ class Deployment {
     // get the sha of the deployment branch
     const commit = await getCurrentCommit(octo, owner, repo, 'deployment')
 
-    const branchName = `${this.config.environment}-${this.kind}-${this.folders.join('-')}`
+    const branchName = `${this.config.prNumber}-${this.config.environment}-${this.kind}-${this.folders.join('-')}`
 
     await createBranch(
       octo,

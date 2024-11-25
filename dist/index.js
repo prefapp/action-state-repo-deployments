@@ -38562,7 +38562,7 @@ class Deployment {
     // get the sha of the deployment branch
     const commit = await getCurrentCommit(octo, owner, repo, 'deployment')
 
-    const branchName = `${this.config.environment}-${this.kind}-${this.folders.join('-')}`
+    const branchName = `${this.config.prNumber}-${this.config.environment}-${this.kind}-${this.folders.join('-')}`
 
     await createBranch(
       octo,
@@ -39140,7 +39140,7 @@ async function run() {
     const argoPorjectsDir = core.getInput('argo_projects_dir')
     const prNUmber =
       github.context.payload.pull_request.number ?? process.env.GITHUB_PR_NUMBER
-    const author = github.event.pull_request.user.login
+    const author = github.context.payload.pull_request.user.login
     const environment = core.getInput('environment')
 
     const config = new Config(
