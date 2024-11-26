@@ -1,18 +1,17 @@
 ---
 bases:
-  - environments.yaml
   - repositories.yaml
 
 releases:
 
-  - name: {{.StateValues.app}}
+  - name: {{.StateValues.sys_app}}
     chart: {{.StateValues.chart}}
     version: {{.StateValues.version}}
     namespace:  
       {{- if hasKey .StateValues "namespace" -}}
       {{.StateValues.namespace | quote | indent 1}}
       {{- else -}}
-      {{- $nmspc := printf "%s-%s-%s" .StateValues.tenant .StateValues.app .Environment.Name -}}
+      {{- $nmspc := printf "%s-%s" .StateValues.cluster .StateValues.sys_app -}}
       {{- $nmspc | quote | indent 1 -}}
       {{- end }}
     values:

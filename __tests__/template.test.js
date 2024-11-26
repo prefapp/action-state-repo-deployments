@@ -21,9 +21,8 @@ describe('hydrateDeployment', () => {
     fs.removeSync(tmpDir)
   })
 
-  it('should be able to template a chart', () => {
+  it('should be able to template an app chart', () => {
     const config = new Config(
-      'dev',
       path.join(tmpDir, 'deployments'),
       path.join(tmpDir, 'output'),
       undefined
@@ -35,7 +34,7 @@ describe('hydrateDeployment', () => {
       path.join(tmpDir, 'deployments')
     )
 
-    const updatedDeployments = ['apps/cluster-name/test-tenant/sample-app']
+    const updatedDeployments = ['apps/cluster-name/test-tenant/sample-app/dev']
 
     templateDeployments(updatedDeployments, config)
 
@@ -53,6 +52,8 @@ describe('hydrateDeployment', () => {
       expect(data.metadata.name).toBe(name)
       expect(data.kind).toBe(kind)
     }
+
+    expect(files.length).toBe(2)
 
     // Update dev yaml to set serviceAccount.create to fale in final.yaml
     const finalYaml = path.join(
@@ -75,7 +76,31 @@ describe('hydrateDeployment', () => {
 
     // Verify that the there is only one file in the output directory
     files = glob.sync(`${config.outputDir}/**/*.@(yaml|yml)`)
-    expect(files.length).toBe(5)
+    expect(files.length).toBe(1)
+  })
+
+  it('should be able to template a sys chart', () => {
+    const config = new Config(
+      path.join(tmpDir, 'deployments'),
+      path.join(tmpDir, 'output'),
+      undefined
+    )
+
+    // Copy the fixtures folder to the temporary directory
+    fs.copySync(
+      path.join(__dirname, 'fixtures'),
+      path.join(tmpDir, 'deployments')
+    )
+
+    const updatedDeployments = ['sys_services/cluster-name/cert-manager']
+
+    templateDeployments(updatedDeployments, config)
+
+    // Verify that each file follows the naming convention <kind>.<namespace>.yaml
+
+    const files = glob.sync(`${config.outputDir}/**/*.@(yaml|yml)`)
+
+    expect(files.length).toBe(1)
   })
 
   // TODO: Add test to verify that apps and sys services output folders are created correctly

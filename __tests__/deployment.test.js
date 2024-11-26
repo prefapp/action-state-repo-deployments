@@ -13,7 +13,6 @@ jest.mock('glob')
 describe('Deployment', () => {
   describe('should be able to display a more user friendly string', () => {
     const config = new Config(
-      'dev',
       path.join('testDir', 'deployments'),
       path.join('testDir', 'output'),
       undefined
@@ -29,7 +28,8 @@ describe('Deployment', () => {
     dp = new AppDeployment('testKind', config, [
       'testCluster',
       'testTenant',
-      'testApp'
+      'testApp',
+      'dev'
     ])
     it('should return a string', () => {
       expect(typeof dp._toString(true)).toBe('string')

@@ -20,7 +20,6 @@ describe('hydrateDeployment', () => {
 
   it('should be able to validate the namespace', async () => {
     const config = new Config(
-      'dev',
       path.join(tmpDir, 'deployments'),
       path.join(tmpDir, 'output'),
       path.join(__dirname, 'fixtures', 'state-argo'),
@@ -33,7 +32,7 @@ describe('hydrateDeployment', () => {
       path.join(tmpDir, 'deployments')
     )
 
-    const updatedDeployments = 'apps/cluster-name/test-tenant/sample-app'
+    const updatedDeployments = 'apps/cluster-name/test-tenant/sample-app/dev'
 
     // Create the deployment
     const templateDep = createDeployment(updatedDeployments, config)

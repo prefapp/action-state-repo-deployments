@@ -1,5 +1,7 @@
 # dev.yaml
 version: 18.2.5 
+
+# Using local chart for testing
 chart: ./charts/foo-chart
 
 hooks: []

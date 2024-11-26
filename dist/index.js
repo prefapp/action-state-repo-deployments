@@ -38382,7 +38382,6 @@ function wrappy (fn, cb) {
 
 class Config {
   /**
-   * @param {string} environment The environment to deploy to.
    * @param {string} deploymentsDir The directory containing the deployment templates.
    * @param {string} outputDir The directory to output the rendered deployments.
    * @param {string} argoProjectsDir The directory containing the ArgoCD projects.
@@ -38390,14 +38389,12 @@ class Config {
    * @param {string} author The author of the pull request.
    */
   constructor(
-    environment,
     deploymentsDir,
     outputDir,
     argoProjectsDir,
     prNumber,
     author
   ) {
-    this.environment = environment
     this.deploymentsDir = deploymentsDir
     this.outputDir = outputDir
     this.argoProjectsDir = argoProjectsDir
@@ -38511,7 +38508,6 @@ class Deployment {
           this.config.outputDir,
           this.kind,
           ...this.folders,
-          this.config.environment,
           newFileName
         )
 
@@ -38544,7 +38540,6 @@ class Deployment {
       this.config.deploymentsDir,
       this.kind,
       ...this.folders,
-      this.config.environment,
       'AUTO_MERGE'
     )
 
@@ -38565,7 +38560,7 @@ class Deployment {
     // get the sha of the deployment branch
     const commit = await getCurrentCommit(octo, owner, repo, 'deployment')
 
-    const branchName = `${this.config.prNumber}-${this.config.environment}-${this.kind}-${this.folders.join('-')}`
+    const branchName = `${this.config.prNumber}-${this.kind}-${this.folders.join('-')}`
 
     await createBranch(
       octo,
@@ -38593,8 +38588,7 @@ class Deployment {
 
     const pr = prs.data.find(
       pullRequest =>
-        pullRequest.head.ref ===
-        `${this.config.environment}-${this.kind}-${this.folders.join('-')}`
+        pullRequest.head.ref === branchName
     )
 
     let newPrNumber
@@ -38603,7 +38597,7 @@ class Deployment {
       // Create a PR
 
       core.info(
-        `Creating PR for ${this.config.environment}-${this.kind}-${this.folders.join('-')}`
+        `Creating PR for ${branchName}`
       )
 
       const prResponse = await createPr(
@@ -38661,15 +38655,16 @@ class AppDeployment extends Deployment {
   constructor(kind, config, folders) {
     super(kind, config, folders)
 
-    const [cluster, tenant, app] = folders
+    const [cluster, tenant, app, environment] = folders
     this.cluster = cluster
     this.tenant = tenant
     this.app = app
+    this.environment = environment
   }
 
   _toString(summarize) {
     if (summarize) {
-      return `Deployment in cluster: \`${this.cluster}\`, tenant: \`${this.tenant}\`, app: \`${this.app}\` for \`${this.config.environment}\` environment`
+      return `Deployment in cluster: \`${this.cluster}\`, tenant: \`${this.tenant}\`, app: \`${this.app}\` for \`${this.environment}\` environment`
     } else {
       // Make it this way to avoid adding extra tabs at the start and github interprets it as a block code
       return [
@@ -38677,7 +38672,7 @@ class AppDeployment extends Deployment {
         `- cluster: \`${this.cluster}\``,
         `- tenant: \`${this.tenant}\``,
         `- app: \`${this.app}\``,
-        `- environment: \`${this.config.environment}\``
+        `- environment: \`${this.environment}\``
       ].join('\n')
     }
   }
@@ -38686,7 +38681,7 @@ class AppDeployment extends Deployment {
     return [
       `app/${this.app}`,
       `tenant/${this.tenant}`,
-      `env/${this.config.environment}`,
+      `env/${this.environment}`,
       `cluster/${this.cluster}`
     ]
   }
@@ -38700,9 +38695,9 @@ class AppDeployment extends Deployment {
         this.config.outputDir,
         this.kind,
         ...this.folders,
-        this.config.environment
+        this.environment
       ),
-      this.config.environment,
+      this.environment,
       {
         tenant: this.tenant,
         app: this.app,
@@ -38711,10 +38706,10 @@ class AppDeployment extends Deployment {
       path.join(
         this.config.deploymentsDir,
         this.kind,
-        ...this.folders,
-        `${this.config.environment}.yaml`
+        ...this.folders.slice(0, -1),
+        `${this.environment}.yaml`
       ),
-      [this.tenant, this.app, this.config.environment].join('-')
+      [this.tenant, this.app, this.environment].join('-')
     )
 
     console.log(result.stderr.toString())
@@ -38730,7 +38725,7 @@ class AppDeployment extends Deployment {
 
     // Validate the metadata.name of the files
 
-    const namespace = `${this.tenant}-${this.app}-${this.config.environment}`
+    const namespace = `${this.tenant}-${this.app}-${this.environment}`
 
     for (const file of files) {
       const filePath = path.join(file)
@@ -38739,7 +38734,7 @@ class AppDeployment extends Deployment {
 
       if (data?.metadata?.namespace !== namespace) {
         throw new Error(
-          `File ${file} does not have the correct metadata.namespace. Expected ${this.tenant}-${this.app}-${this.config.environment} and got data ${data?.metadata?.name}`
+          `File ${file} does not have the correct metadata.namespace. Expected ${this.tenant}-${this.app}-${this.environment} and got data ${data?.metadata?.name}`
         )
       }
     }
@@ -38767,8 +38762,8 @@ class SysServiceDeployment extends Deployment {
   constructor(kind, config, folders) {
     super(kind, config, folders)
 
-    const [app, cluster] = folders
-    this.app = app
+    const [cluster, sys_app] = folders
+    this.sys_app = sys_app
     this.cluster = cluster
   }
 
@@ -38780,14 +38775,14 @@ class SysServiceDeployment extends Deployment {
       path.join(this.config.outputDir, this.kind, ...this.folders),
       this.folders.join('-'),
       {
-        app: this.app,
+        sys_app: this.sys_app,
         cluster: this.cluster
       },
       path.join(
         this.config.deploymentsDir,
         this.kind,
         ...this.folders,
-        `${this.config.environment}.yaml`
+        `platform.yaml`
       )
     )
 
@@ -38805,7 +38800,7 @@ function createDeployment(deployment, config) {
   switch (type) {
     case 'apps':
       return new AppDeployment(type, config, remainingFolders)
-    case 'sys-services':
+    case 'sys_services':
       return new SysServiceDeployment(type, config, remainingFolders)
     default:
       throw new Error(`Unknown deployment type: ${type}`)
@@ -39144,10 +39139,8 @@ async function run() {
     const prNUmber =
       github.context.payload.pull_request.number ?? process.env.GITHUB_PR_NUMBER
     const author = github.context.payload.pull_request.user.login
-    const environment = core.getInput('environment')
 
     const config = new Config(
-      environment,
       deploymentsDir,
       outputDir,
       argoPorjectsDir,

@@ -17,10 +17,8 @@ async function run() {
     const prNUmber =
       github.context.payload.pull_request.number ?? process.env.GITHUB_PR_NUMBER
     const author = github.context.payload.pull_request.user.login
-    const environment = core.getInput('environment')
 
     const config = new Config(
-      environment,
       deploymentsDir,
       outputDir,
       argoPorjectsDir,
