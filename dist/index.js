@@ -38494,6 +38494,12 @@ class Deployment {
       const yamlContent = yaml.loadAll(fileContent)
 
       for (const doc of yamlContent) {
+
+        if (doc === null) {
+          console.log(`Document is null in file ${file}`)
+          continue
+        }
+
         const crKind = doc?.kind
         const crName = doc?.metadata?.name
 
