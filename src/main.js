@@ -1,5 +1,8 @@
 const core = require('@actions/core')
-const { wait } = require('./wait')
+const { renderDeployments } = require('./render')
+const { verifyDeployments } = require('./verify')
+const { Config } = require('./config')
+const github = require('@actions/github')
 
 /**
  * The main function for the action.
@@ -7,20 +10,27 @@ const { wait } = require('./wait')
  */
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    const updatedDeployments = JSON.parse(core.getInput('updated_deployments'))
+    const deploymentsDir = core.getInput('template_dir')
+    const outputDir = core.getInput('output_dir')
+    const argoPorjectsDir = core.getInput('argo_projects_dir')
+    const prNUmber =
+      github.context.payload.pull_request.number ?? process.env.GITHUB_PR_NUMBER
+    const author = github.context.payload.pull_request.user.login
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const config = new Config(
+      deploymentsDir,
+      outputDir,
+      argoPorjectsDir,
+      prNUmber,
+      author
+    )
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    renderDeployments(updatedDeployments, config)
+    verifyDeployments(updatedDeployments, config)
   } catch (error) {
     // Fail the workflow run if an error occurs
+    console.error(error)
     core.setFailed(error.message)
   }
 }

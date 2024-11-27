@@ -1,0 +1,2 @@
+foo:
+  image: myregistry.com/sample-tenant/sample-app:1.0.0

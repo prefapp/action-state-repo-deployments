@@ -1,0 +1,31 @@
+global:
+  logLevel: 1
+resources:
+  limits:
+    cpu: "200m"
+    memory: "512Mi"
+  requests:
+    cpu: "10m"
+    memory: "64Mi"
+webhook:
+  resources:
+    limits:
+      cpu: "200m"
+      memory: "512Mi"
+    requests:
+      cpu: "10m"
+      memory: "32Mi"
+  nodeSelector:
+    nodepool-group: generalnohpa
+cainjector:
+  resources:
+    limits:
+      cpu: "200m"
+      memory: "512Mi"
+    requests:
+      cpu: "10m"
+      memory: "64Mi"
+  nodeSelector:
+    nodepool-group: generalnohpa
+nodeSelector:
+  nodepool-group: generalnohpa
