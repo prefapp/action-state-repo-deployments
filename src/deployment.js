@@ -56,15 +56,17 @@ class Deployment {
       const fileContent = fs.readFileSync(file, 'utf8')
       const yamlContent = yaml.loadAll(fileContent)
 
-      console.log(`Processing file ${file}`)
-      console.log(`Found ${yamlContent.length} documents`)
-      console.log(yamlContent)
-
       for (const doc of yamlContent) {
         const crKind = doc?.kind
         const crName = doc?.metadata?.name
 
         if (!crKind || !crName) {
+
+          console.log(`Error processing file ${file}`)
+          console.log(`Content: ${fileContent}`)
+          console.log(`YAML: ${yamlContent}`)
+          console.log(`Doc: ${doc}`)
+
           throw new Error(
             `File ${file} does not have kind or metadata.name. Got ${crKind} and ${crName}. Got data ${doc}`
           )
