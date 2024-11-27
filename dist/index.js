@@ -38493,6 +38493,10 @@ class Deployment {
       const fileContent = fs.readFileSync(file, 'utf8')
       const yamlContent = yaml.loadAll(fileContent)
 
+      console.log(`Processing file ${file}`)
+      console.log(`Found ${yamlContent.length} documents`)
+      console.log(yamlContent)
+
       for (const doc of yamlContent) {
         const crKind = doc?.kind
         const crName = doc?.metadata?.name
