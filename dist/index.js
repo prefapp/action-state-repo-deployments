@@ -38804,6 +38804,22 @@ class SysServiceDeployment extends Deployment {
   _verify() {
     // There are no verifications for sys-services
   }
+
+  _toString(summarize) {
+    if (summarize) {
+      return `Deployment in cluster: \`${this.cluster}\`, sys-service: \`${this.sys_app}\``
+    } else {
+      return [
+        `Deployment in cluster:`,
+        `- cluster: \`${this.cluster}\``,
+        `- sys-service: \`${this.sys_app}\``
+      ].join('\n')
+    }
+  }
+
+  _getLabels() {
+    return [`sys_service/${this.sys_app}`, `cluster/${this.cluster}`]
+  }
 }
 
 function createDeployment(deployment, config) {
@@ -39030,6 +39046,8 @@ function getLabelColor(label) {
     return '33810b'
   } else if (label.includes('cluster/')) {
     return 'f1c232'
+  } else if (label.includes('sys_service/')) {
+    return '0e8a16'
   } else {
     return '000000'
   }

@@ -367,6 +367,22 @@ class SysServiceDeployment extends Deployment {
   _verify() {
     // There are no verifications for sys-services
   }
+
+  _toString(summarize) {
+    if (summarize) {
+      return `Deployment in cluster: \`${this.cluster}\`, sys-service: \`${this.sys_app}\``
+    } else {
+      return [
+        `Deployment in cluster:`,
+        `- cluster: \`${this.cluster}\``,
+        `- sys-service: \`${this.sys_app}\``
+      ].join('\n')
+    }
+  }
+
+  _getLabels() {
+    return [`sys_service/${this.sys_app}`, `cluster/${this.cluster}`]
+  }
 }
 
 function createDeployment(deployment, config) {

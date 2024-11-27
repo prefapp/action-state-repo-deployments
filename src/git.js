@@ -196,6 +196,8 @@ function getLabelColor(label) {
     return '33810b'
   } else if (label.includes('cluster/')) {
     return 'f1c232'
+  } else if (label.includes('sys_service/')) {
+    return '0e8a16'
   } else {
     return '000000'
   }
