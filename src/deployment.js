@@ -61,6 +61,7 @@ class Deployment {
         const crName = doc?.metadata?.name
 
         if (!crKind || !crName) {
+          console.log(doc)
           throw new Error(
             `File ${file} does not have kind or metadata.name. Got ${crKind} and ${crName}`
           )
