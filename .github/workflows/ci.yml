@@ -21,6 +21,10 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
+      # We need to install helmfile to run tests
+      - name: Setup helmfile
+        uses: mamezou-tech/setup-helmfile@v2.0.0
+
       - name: Setup Node.js
         id: setup-node
         uses: actions/setup-node@v4
@@ -53,12 +57,13 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
+      # We need to install helmfile to run tests
+      - name: Setup helmfile
+        uses: mamezou-tech/setup-helmfile@v2.0.0
+
       - name: Test Local Action
         id: test-action
         uses: ./
         with:
-          milliseconds: 1000
-
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+          updated_deployments: '[]'
+          operation: 'render'

@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: sample-app-project
+  namespace: argocd
+spec:
+  description: Sample App Project
+  sourceRepos:
+    - https://github.com/your-org/your-repo.git
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceBlacklist:
+    - group: '*'
+      kind: '*'
+  roles:
+    - name: developer
+      description: Developer role with read-only access
+      policies:
+        - p, proj:sample-app-project:developer, applications, get, sample-app-project/*, allow
+      groups:
+        - your-org:developers

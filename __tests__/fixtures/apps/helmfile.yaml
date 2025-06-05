@@ -1,0 +1,23 @@
+---
+bases:
+  - environments.yaml
+  - repositories.yaml
+
+releases:
+
+  - name: {{.StateValues.app}}
+    chart: {{.StateValues.chart}}
+    version: {{.StateValues.version}}
+    namespace:  
+      {{- if hasKey .StateValues "namespace" -}}
+      {{.StateValues.namespace | quote | indent 1}}
+      {{- else -}}
+      {{- $nmspc := printf "%s-%s-%s" .StateValues.tenant .StateValues.app .Environment.Name -}}
+      {{- $nmspc | quote | indent 1 -}}
+      {{- end }}
+    values:
+      - values.yaml.gotmpl
+
+    {{- if hasKey .StateValues "hooks" }}
+    hooks: {{.StateValues.hooks | toYaml | nindent 6 -}}
+    {{- end -}}

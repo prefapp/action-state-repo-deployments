@@ -4,15 +4,18 @@ author: 'Your name or organization here'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  updated_deployments:
+    description: 'JSON string of updated deployments'
     required: true
-    default: '1000'
-
-# Define your outputs here.
-outputs:
-  time:
-    description: 'Your output description here'
+  template_dir:
+    description: 'Directory containing the deployment templates'
+    required: true
+  output_dir:
+    description: 'Directory to output the rendered templates'
+    required: true
+  argo_projects_dir:
+    description: 'Directory containing the ArgoCD projects'
+    required: false
 
 runs:
   using: node20
